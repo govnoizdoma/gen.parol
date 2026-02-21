@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор паролей  </title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 750px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            text-align: center; 
+            background: #000000;
+            color: #ffffff;
+        }
+        .container { background: #111111; padding: 30px; border-radius: 20px; border: 1px solid #333333; }
+        h1 { color: #ffffff; text-shadow: 2px 2px 4px #000000; margin-bottom: 10px; }
+        .greeting { background: #222222; padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 18px; border: 1px solid #444444; }
+        input { 
+            font-size: 24px; 
+            padding: 15px; 
+            width: 500px; 
+            border: 3px solid #ffffff; 
+            border-radius: 10px; 
+            text-align: center; 
+            background: #ffffff;
+            margin: 15px 0;
+            color: #000000;
+        }
+        button { 
+            background: #ffffff; 
+            color: #000000; 
+            padding: 15px 30px; 
+            font-size: 16px; 
+            font-weight: bold;
+            border: none; 
+            cursor: pointer; 
+            margin: 10px; 
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        button:hover { 
+            background: #cccccc; 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+        }
+        select { 
+            padding: 12px; 
+            font-size: 16px; 
+            width: 120px; 
+            border-radius: 10px;
+            border: 2px solid #ffffff;
+            background: #ffffff;
+            color: #000000;
+        }
+        label { 
+            font-size: 18px; 
+            display: block; 
+            margin: 15px 0 5px 0; 
+            color: #ffffff;
+        }
+        .type-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .type-btn {
+            background: #333333;
+            border: 2px solid #666666;
+            padding: 12px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+            color: #ffffff;
+        }
+        .type-btn.active {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000000;
+        }
+        .type-btn:hover { background: #444444; }
+
+        /* Стили для проверки пароля */
+        .strength-check {
+            background: #222222;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 2px solid #444444;
+        }
+        #checkInput {
+            font-size: 20px;
+            padding: 12px;
+            width: 480px;
+            border: 3px solid #ffffff;
+            border-radius: 10px;
+            text-align: center;
+            background: #ffffff;
+            margin: 10px 0;
+            color: #000000;
+        }
+        #strengthResult {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .strength-weak { background: #333333; color: #ffffff; border: 2px solid #ffffff; }
+        .strength-medium { background: #444444; color: #ffffff; border: 2px solid #ffffff; }
+        .strength-strong { background: #ffffff; color: #000000; border: 2px solid #000000; }
+        .strength-empty { color: #888888; }
+
+        /* Навигация между страницами */
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            background: #333333;
+            border: 2px solid #666666;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Стили для второй страницы */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Стили для описания */
+        .about-section {
+            background: #222222;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 30px;
+            border: 2px solid #444444;
+        }
+        .about-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 1px 1px 3px #000000;
+        }
+        .about-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        .features-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .features-list li {
+            margin: 8px 0;
+            padding: 8px 0;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .features-list li:before {
+            content: "✅ ";
+            font-weight: bold;
+        }
+        .info-card {
+            background: #333333;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #ffffff;
+        }
+        .warning {
+            background: #444444;
+            border-left-color: #ffffff;
+        }
+        h3 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        p, code {
+            color: #ffffff;
+        }
+        code {
+            background: #111111;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #666666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <div class="nav-buttons">
+        <a href="#" class="nav-btn active" onclick="showPage(1)"> Генератор</a>
+        <a href="#" class="nav-btn" onclick="showPage(2)">ℹ шо такое пароль</a>
+    </div>
+
+    <!-- Страница 1: Генератор -->
+    <div id="page1" class="container page active">
+        <h1> Генератор паролей</h1>
+        
+        <div class="greeting">
+            Привет <br>
+            Я помогу создать <strong>супернадежный пароль</strong> за секунду(может даже меньше)<br>
+            Выбери тип и длину — готово 
+        </div>
+
+        <label>Тип пароля:</label>
+        <div class="type-group">
+            <div class="type-btn active" onclick="setType('digits')" id="digitsBtn"> Цифры</div>
+            <div class="type-btn" onclick="setType('letters')" id="lettersBtn"> Буквы </div>
+            <div class="type-btn" onclick="setType('mixed')" id="mixedBtn"> Цифры+Буквы </div>
+        </div>
+
+        <label>Длина (4-20):</label>
+        <select id="length">
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="10" selected>10</option>
+            <option value="12">12</option>
+            <option value="14">14</option>
+            <option value="16">16</option>
+            <option value="18">18</option>
+            <option value="20">20</option>
+        </select>
+
+        <br>
+        <button onclick="generatePassword()"> Новый пароль </button>
+        <br>
+        <input type="text" id="password" readonly placeholder="Твой пароль появится здесь , да да здесь  " />
+        <br>
+        <button onclick="copyPassword()"> Копировать</button>
+
+        <!-- Проверка силы пароля -->
+        <div class="strength-check">
+            <label> Проверь силу пароля:</label>
+            <input type="text" id="checkInput" placeholder="Введи любой пароль..." oninput="checkStrength()">
+            <div id="strengthResult" class="strength-empty">Ожидаю пароль...</div>
+        </div>
+
+        <!-- Описание -->
+        <div class="about-section">
+            <div class="about-title">ℹ О генераторе паролей</div>
+            <div class="about-text">
+                Создавай <strong>непробиваемые пароли</strong> для всех аккаунтов!
+            </div>
+            <ul class="features-list">
+                <li>3 типа паролей: цифры, буквы, смешанные(цифры+буквы)</li>
+                <li>Длина от 4 до 20 символов</li>
+                <li>Мгновенная проверка силы пароля</li>
+                <li> копирование в 1 клик</li>
+                <li>100% безопасно — ничего не сохраняется</li>
+            </ul>
+            <div class="about-text">
+                <em> Совет: Выбирай "Цифры+Буквы" и длину 12+ для максимальной защиты!</em>
+            </div>
+        </div>
+    </div>
+
+    <!-- Страница 2: Что такое пароль -->
+    <div id="page2" class="container page">
+        <h1>ℹ Что такое пароль?</h1>
+        
+        <div class="greeting">
+            Разберёмся, зачем нужны пароли и как их делать безопасными! 
+        </div>
+
+        <div class="info-card">
+            <h3> Что это такое?</h3>
+            <p><strong>Пароль</strong> — это типа секретная комбинация символов, которая защищает твои аккаунты от случайных взломов. Только ты знаешь свой пароль(главнае не каму его не гавари )</p>
+        </div>
+
+        <div class="info-card">
+            <h3> Почему взламывают пароли?</h3>
+            <ul class="features-list">
+                <li>Угадывают простые: <code>123456</code>, <code>qwerty</code></li>
+                <li>Подбирают программы (миллиарды попыток в секунду)</li>
+                <li>Крадут из утечек данных сайтов</li>
+                <li>Перехватывают в интернете (если без HTTPS)</li>
+            </ul>
+        </div>
+
+        <div class="info-card warning">
+            <h3>⚠️ Самые слабые пароли мира:</h3>
+            <p><code>123456, password, 123456789, qwerty, admin</code></p>
+            <p>Такие пароли взламывают за <strong>1 секунду</strong>! </p>
+        </div>
+
+        <div class="info-card">
+            <h3> Что делает пароль сильным?</h3>
+            <ul class="features-list">
+                <li><strong>Длина:</strong> 12+ символов (лучше 16)</li>
+                <li><strong>Разнообразие:</strong> БОЛЬШИЕ+маленькие+цифры</li>
+                <li><strong>Случайность:</strong> не слова, не даты рождения</li>
+                <li><strong>Уникальность:</strong> разный для каждого сайта</li>
+            </ul>
+            <p><em>Пример сильного:</em> <code>X9kP2mQ8vR4nT7wL</code></p>
+        </div>
+
+        <div class="info-card">
+            <h3> Полезные советы:</h3>
+            <ul class="features-list">
+                <li>Никогда не используй один пароль везде</li>
+                <li>Включи двухфакторную аутентификацию (2FA)</li>
+            </ul>
+        </div>
+
+        <div class="about-section">
+            <div class="about-text">
+                <em> Готов создавать сильные пароли? Нажми "Генератор" выше! </em>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentType = 'digits';
+        let currentPage = 1;
+
+        function showPage(pageNum) {
+            // Скрываем все страницы
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Показываем нужную страницу
+            document.getElementById(`page${pageNum}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            currentPage = pageNum;
+        }
+
+        function setType(type) {
+            currentType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('password').value = '';
+        }
+
+        function generatePassword() {
+            const length = parseInt(document.getElementById('length').value);
+            let chars = '';
+            
+            if (currentType === 'digits') {
+                chars = '0123456789';
+            } else if (currentType === 'letters') {
+                chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            } else if (currentType === 'mixed') {
+                chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            }
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('password').value = password;
+        }
+
+        function copyPassword() {
+            const passwordField = document.getElementById('password');
+            if (passwordField.value) {
+                passwordField.select();
+                navigator.clipboard.writeText(passwordField.value).catch(() => {
+                    document.execCommand('copy');
+                });
+                alert(' Пароль скопирован!');
+            } else {
+                alert('Сначала сгенерируй пароль! ');
+            }
+        }
+
+        // Проверка силы пароля
+        function checkStrength() {
+            const password = document.getElementById('checkInput').value;
+            const result = document.getElementById('strengthResult');
+            
+            if (password.length === 0) {
+                result.textContent = 'Ожидаю пароль...';
+                result.className = 'strength-empty';
+                return;
+            }
+
+            let score = 0;
+
+            // Длина
+            if (password.length >= 16) score += 3;
+            else if (password.length >= 12) score += 2;
+            else if (password.length >= 8) score += 1;
+
+            // Типы символов
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasDigits = /[0-9]/.test(password);
+            const hasSymbols = /[^A-Za-z0-9]/.test(password);
+
+            let charTypes = 0;
+            if (hasUpper) charTypes++;
+            if (hasLower) charTypes++;
+            if (hasDigits) charTypes++;
+            if (hasSymbols) charTypes++;
+
+            if (charTypes >= 4) score += 3;
+            else if (charTypes >= 3) score += 2;
+            else if (charTypes >= 2) score += 1;
+
+            // Результат
+            if (score >= 5) {
+                result.textContent = ' СИЛЬНЫЙ ';
+                result.className = 'strength-strong';
+            } else if (score >= 3) {
+                result.textContent = ' СРЕДНИЙ ';
+                result.className = 'strength-medium';
+            } else {
+                result.textContent = ' СЛАБЫЙ ';
+                result.className = 'strength-weak';
+            }
+        }
+
+        // Генерация при загрузке
+        window.onload = function() {
+            generatePassword();
+        }
+    </script>
+</body>
+</html>
